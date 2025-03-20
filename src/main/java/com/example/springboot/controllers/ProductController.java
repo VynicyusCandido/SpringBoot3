@@ -1,13 +1,11 @@
-// package com.example.springboot.controllers;
+package com.example.springboot.controllers;// package com.example.springboot.controllers;
 
 import com.example.springboot.dtos.ProductRecordDto;
 import com.example.springboot.models.ProductModel;
 import com.example.springboot.repositories.ProductRepository;
 import jakarta.validation.Valid;
-import jdk.internal.icu.text.UnicodeSet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,18 +35,17 @@ public class ProductController {
         List<ProductModel> productsList = productRepository.findAll();
         if (productsList.isEmpty()) {
             for (ProductModel productModel : productsList) {
-                UUID id = Product.getIdProduct();
-                Product.add(linkTo(methodOn(ProductController.class).getOneProduct(id)).withSelfRel());
+                UUID id = productModel.getIdProduct();
+                productModel.add(linkTo(methodOn(ProductController.class).getOneProduct(id)).withSelfRel());
             }
         }
-    }
         return ResponseEntity.status(HttpStatus.OK).body(productsList);
 
 }
 
     @GetMapping("/product/{id}")
     public ResponseEntity<ProductModel> getOneProduct(@PathVariable(value="id") UUID id){
-        Optional<ProductModel> product0 = ProductRepository.findById(id);
+        Optional<ProductModel> product0 = productRepository.findById(id);
         if (product0.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -59,26 +56,24 @@ public class ProductController {
     @PutMapping("/product/{id}")
     public ResponseEntity<String> updateProduct(@PathVariable(value="id") UUID id,
                                                 @RequestBody ProductRecordDto productRecordDto){
-        Optional<ProductModel> product0 = ProductRepository.findById(id);
+        Optional<ProductModel> product0 = productRepository.findById(id);
         if (product0.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
         }
         var productModel= product0.get();
         BeanUtils.copyProperties(productRecordDto, productModel);
-        ProductRepository.save(productModel);
+        productRepository.save(productModel);
         return ResponseEntity.status(HttpStatus.OK).body("Product updated successfully");
     }
     @DeleteMapping("products/{id}")
     public ResponseEntity<String> updateProduct(@PathVariable(value="id") UUID id){
-        Optional<ProductModel> product0 = ProductRepository.findById(id);
+        Optional<ProductModel> product0 = productRepository.findById(id);
         if (product0.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
         }
-        ProductRepository.delete(product0.get());
+        productRepository.delete(product0.get());
         return ResponseEntity.status(HttpStatus.OK).body("Product deleted suuuccessfully");
+
+    }
+
 }
-
-public void main() {
-}
-
-

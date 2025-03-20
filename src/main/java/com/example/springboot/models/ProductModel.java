@@ -1,7 +1,7 @@
 package com.example.springboot.models;
 
 import jakarta.persistence.*;
-import org.hibernate.validator.constraints.UUID;
+import java.util.UUID;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
